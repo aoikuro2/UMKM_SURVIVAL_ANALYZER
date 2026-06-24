@@ -1,30 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-================================================================================
-UMKM SURVIVAL PREDICTOR - STREAMLIT WEB APP
-Jatinangor, Sumedang, Jawa Barat, Indonesia
-================================================================================
-
-A user-friendly web interface for predicting UMKM survival probability
-using a trained Logistic Regression model.
-
-HOW TO RUN:
------------
-1. Install dependencies:
-   pip install streamlit pandas numpy scikit-learn joblib
-
-2. Make sure these 3 model files are in the SAME folder as this script:
-   - umkm_survival_model.pkl
-   - umkm_scaler.pkl
-   - umkm_encoder.pkl
-
-3. Run the app:
-   streamlit run umkm_survival_app.py
-
-4. Open your browser at http://localhost:8501
-================================================================================
-"""
 
 import streamlit as st
 import pandas as pd
@@ -43,7 +18,7 @@ st.set_page_config(
 )
 
 # =============================================================================
-# CUSTOM CSS FOR BETTER LOOKS
+# CUSTOM CSS
 # =============================================================================
 st.markdown("""
 <style>
@@ -98,10 +73,7 @@ st.markdown("""
 
 @st.cache_resource
 def load_model_artifacts():
-    """
-    Load the trained model, scaler, and label encoder.
-    Cached so it only loads once per session.
-    """
+
     try:
         model = load('umkm_survival_model.pkl')
         scaler = load('umkm_scaler.pkl')
@@ -119,10 +91,7 @@ model, scaler, encoder = load_model_artifacts()
 # =============================================================================
 
 def predict_survival(industri, jarak, harga, biaya, lama):
-    """
-    Core prediction logic.
-    Returns dict with probability, classification, and recommendations.
-    """
+
     # Encode industry
     industry_encoded = encoder.transform([industri])[0]
 
@@ -220,7 +189,7 @@ def predict_survival(industri, jarak, harga, biaya, lama):
 
 
 def get_probability_color(prob):
-    """Return color based on probability score."""
+    #Return color based on probability score.
     if prob >= 70:
         return "#28a745"  # Green
     elif prob >= 50:
@@ -230,7 +199,7 @@ def get_probability_color(prob):
 
 
 def get_gauge_emoji(prob):
-    """Return emoji based on probability."""
+    #Return emoji based on probability."
     if prob >= 70:
         return "🟢"
     elif prob >= 50:
@@ -243,7 +212,7 @@ def get_gauge_emoji(prob):
 # SIDEBAR
 # =============================================================================
 with st.sidebar:
-    st.markdown("### 📊 Tentang Aplikasi")
+    st.markdown("### Tentang Aplikasi")
     st.markdown("""
     Aplikasi ini memprediksi peluang kelangsungan hidup UMKM di **Jatinangor, Sumedang** 
     menggunakan model **Logistic Regression**.
@@ -342,7 +311,7 @@ st.markdown("<br>", unsafe_allow_html=True)
 center_col = st.columns([1, 2, 1])[1]
 with center_col:
     predict_btn = st.button(
-        "🔮 Prediksi Kelangsungan Usaha",
+        "Prediksi Kelangsungan Usaha",
         type="primary",
         use_container_width=True
     )

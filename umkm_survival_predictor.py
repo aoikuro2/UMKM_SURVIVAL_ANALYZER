@@ -1,76 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-================================================================================
-UMKM SURVIVAL PREDICTION SYSTEM - JATINANGOR, SUMEDANG, JAWA BARAT, INDONESIA
-================================================================================
-
-Author: AI Assistant
-Date: June 2026
-Purpose: Predict survival probability of UMKM (Usaha Mikro Kecil Menengah) 
-         using Logistic Regression with 5 input features.
-
-DESCRIPTION:
-------------
-This script creates a complete machine learning pipeline that:
-1. Generates realistic synthetic data for UMKM in Jatinangor
-2. Preprocesses and encodes categorical/numerical features
-3. Trains a Logistic Regression classification model
-4. Evaluates model performance with standard metrics
-5. Provides survival probability prediction (0-100%)
-6. Identifies specific inputs that need improvement for low-survival cases
-
-INPUT FEATURES (5 variables):
-------------------------------
-1. jenis_industri        : Categorical - Industry type 
-                           (Kuliner, Fashion, Kerajinan, Pertanian, Jasa, Elektronik)
-2. jarak_pemukiman_km    : Numeric   - Distance from residential area (0.1 - 10.0 km)
-3. range_harga           : Ordinal   - Price range (1=Rendah, 2=Menengah, 3=Tinggi)
-4. biaya_operasional_juta: Numeric   - Monthly operational cost (1 - 50 Juta Rupiah)
-5. lama_usaha_tahun      : Numeric   - Years in operation (0 - 20 years)
-
-OUTPUT:
--------
-- Survival Probability Score (0-100%)
-- Classification: HIGH SURVIVAL (>50%) or LOW SURVIVAL (≤50%)
-- If LOW SURVIVAL: Specific recommendations for each problematic input
-
-REQUIREMENTS:
--------------
-Python 3.7+
-pandas
-numpy
-scikit-learn
-joblib
-
-INSTALLATION:
--------------
-pip install pandas numpy scikit-learn joblib
-
-RUNNING THE SCRIPT:
--------------------
-1. Save this file as `umkm_survival_predictor.py`
-2. Run: python umkm_survival_predictor.py
-3. The script will:
-   - Generate synthetic data
-   - Train the model
-   - Show evaluation metrics
-   - Run 3 demonstration predictions
-   - Save the trained model to disk
-
-USING THE PREDICTOR IN YOUR CODE:
-----------------------------------
-After running once, you can use the saved model:
-
-    from joblib import load
-    model = load('umkm_survival_model.pkl')
-    scaler = load('umkm_scaler.pkl')
-    encoder = load('umkm_encoder.pkl')
-
-    # Then call predict_survival() with your data
-
-================================================================================
-"""
+#================================================================================
+#UMKM SURVIVAL PREDICTION SYSTEM
+#================================================================================
+#Script ini menghasilkan data sintetis UMKM di Jatinangor, melatih model klasifikasi Logistic Regression,
 
 import pandas as pd
 import numpy as np
@@ -102,27 +35,7 @@ np.random.seed(RANDOM_SEED)
 # =============================================================================
 
 def generate_synthetic_data(n_samples=1000):
-    """
-    Generate realistic synthetic data for UMKM in Jatinangor.
-
-    Jatinangor is a developing area in Sumedang, West Java, with:
-    - Large student population (UNPAD, ITB Jatinangor campus)
-    - Mix of urban and agricultural areas
-    - Growing UMKM ecosystem
-
-    The survival probability is calculated using realistic business logic
-    that reflects actual UMKM challenges in this region.
-
-    Parameters:
-    -----------
-    n_samples : int
-        Number of synthetic UMKM records to generate
-
-    Returns:
-    --------
-    pandas.DataFrame
-        DataFrame containing all features and survival labels
-    """
+    
 
     # Feature 1: Jenis Industri UMKM (Categorical)
     # Different industries have different baseline survival characteristics
@@ -181,22 +94,6 @@ def generate_synthetic_data(n_samples=1000):
 
 
 def _calculate_survival_prob(industri, jarak, harga, biaya, lama):
-    """
-    Internal function to calculate survival probability.
-
-    Logic based on UMKM research and Jatinangor market characteristics:
-    - Kuliner: High demand from university students (+0.10)
-    - Pertanian: Strong local agricultural base (+0.08)
-    - Kerajinan: Unique products, tourist appeal (+0.05)
-    - Jasa: Steady but competitive (+0.02)
-    - Fashion: Very competitive, fast trends (-0.05)
-    - Elektronik: High capital, rapid obsolescence (-0.08)
-
-    Distance: Closer to residential = better (max +0.20 at 0km)
-    Price: Menengah (2) is optimal for Jatinangor market (+0.08)
-    Cost: Lower operational cost = better survival
-    Age: First 2 years critical (-0.10), established businesses (+0.15)
-    """
 
     prob = 0.45  # Base probability
 
@@ -245,24 +142,6 @@ def _calculate_survival_prob(industri, jarak, harga, biaya, lama):
 # =============================================================================
 
 def preprocess_data(df):
-    """
-    Preprocess raw data for machine learning.
-
-    Steps:
-    1. Encode categorical variable (jenis_industri) using LabelEncoder
-    2. Separate features (X) and target (y)
-    3. Split into train/test sets (80/20)
-    4. Standardize numerical features using StandardScaler
-
-    Parameters:
-    -----------
-    df : pandas.DataFrame
-        Raw synthetic data from generate_synthetic_data()
-
-    Returns:
-    --------
-    tuple : (X_train_scaled, X_test_scaled, y_train, y_test, scaler, label_encoder, feature_columns)
-    """
 
     # Encode categorical variable
     label_encoder = LabelEncoder()
@@ -299,24 +178,6 @@ def preprocess_data(df):
 # =============================================================================
 
 def train_model(X_train, y_train):
-    """
-    Train Logistic Regression model.
-
-    Uses L-BFGS solver (efficient for small datasets) with balanced class weights
-    to handle any slight imbalance in the data.
-
-    Parameters:
-    -----------
-    X_train : numpy.ndarray
-        Scaled training features
-    y_train : pandas.Series
-        Training labels
-
-    Returns:
-    --------
-    sklearn.linear_model.LogisticRegression
-        Trained model
-    """
 
     model = LogisticRegression(
         random_state=RANDOM_SEED,
@@ -334,28 +195,6 @@ def train_model(X_train, y_train):
 # =============================================================================
 
 def evaluate_model(model, X_test, y_test):
-    """
-    Evaluate trained model performance.
-
-    Metrics:
-    - Accuracy: Overall correct predictions
-    - AUC-ROC: Ability to distinguish between classes
-    - Classification Report: Precision, Recall, F1-score per class
-    - Confusion Matrix: True/False positives and negatives
-
-    Parameters:
-    -----------
-    model : LogisticRegression
-        Trained model
-    X_test : numpy.ndarray
-        Scaled test features
-    y_test : pandas.Series
-        Test labels
-
-    Returns:
-    --------
-    dict : Evaluation metrics
-    """
 
     y_pred = model.predict(X_test)
     y_pred_proba = model.predict_proba(X_test)[:, 1]
@@ -414,50 +253,7 @@ def evaluate_model(model, X_test, y_test):
 def predict_survival(jenis_industri, jarak_pemukiman, range_harga, 
                      biaya_operasional, lama_usaha,
                      model=None, scaler=None, label_encoder=None):
-    """
-    Predict UMKM survival probability and provide improvement recommendations.
-
-    This is the MAIN FUNCTION you will call to analyze a UMKM.
-
-    Parameters:
-    -----------
-    jenis_industri : str
-        Industry type. Must be one of:
-        'Kuliner', 'Fashion', 'Kerajinan', 'Pertanian', 'Jasa', 'Elektronik'
-
-    jarak_pemukiman : float
-        Distance from residential area in km (0.1 - 10.0)
-        Lower is better (closer to customers = higher survival)
-
-    range_harga : int
-        Price range classification:
-        1 = Rendah (Low price, thin margins)
-        2 = Menengah (Optimal for Jatinangor market)
-        3 = Tinggi (Premium, limited customer base)
-
-    biaya_operasional : float
-        Monthly operational cost in Juta Rupiah (1 - 50)
-        Includes rent, utilities, salaries, materials
-        Lower is better for survival
-
-    lama_usaha : float
-        Years the business has been operating (0 - 20)
-        First 2 years are critical; older businesses survive better
-
-    model, scaler, label_encoder : sklearn objects
-        Trained model components. If None, will load from saved files.
-
-    Returns:
-    --------
-    dict : Complete prediction result containing:
-        - survival_probability: float (0-100)
-        - classification: 'HIGH SURVIVAL' or 'LOW SURVIVAL'
-        - status_message: Human-readable explanation
-        - inputs: Dictionary of input values
-        - recommendations: List of improvement suggestions (only for LOW SURVIVAL)
-        - total_recommendations: int
-    """
-
+    
     # Load model components if not provided
     if model is None:
         model = joblib.load(MODEL_FILE)
@@ -604,14 +400,7 @@ def predict_survival(jenis_industri, jarak_pemukiman, range_harga,
 
 
 def print_prediction(result):
-    """
-    Pretty-print prediction results to console.
-
-    Parameters:
-    -----------
-    result : dict
-        Output from predict_survival()
-    """
+    
 
     inputs = result['inputs']
 
